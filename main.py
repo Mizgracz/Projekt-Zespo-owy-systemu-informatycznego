@@ -256,10 +256,11 @@ def menu_pause():
     
     global pause
     global click
-    pause_surface = pygame.Surface((res[0]-100,res[1]-100), pygame.SRCALPHA)   # per-pixel alpha
+    
+    pause_surface = pygame.Surface((res[0]/3,res[1]-200), pygame.SRCALPHA)   # per-pixel alpha
     pause_surface.fill((0,0,0,220))                         # notice the alpha value in the color
     
-    screen.blit(pause_surface, (50,50))
+    screen.blit(pause_surface, (res[0]/2-(res[0]/3)/2,150))
     
 
     screen.blit(button_play_surface, button_play)
