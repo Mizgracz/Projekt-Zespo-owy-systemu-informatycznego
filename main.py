@@ -23,8 +23,8 @@ obramowanie_wymiary_y = [0, 30, 97, 127, 97, 30]
 wymiar_obramowania = []
 m_score = 0
 a_score = 0
-p_score = 0
-
+p_score = 1
+wyb = True
 
 # interfejs
 up_bar = pygame.Surface((1280, 30))
@@ -36,6 +36,11 @@ image2_surface = pygame.image.load("wioska.png")
 image3_surface = pygame.image.load("las.png")
 image4_surface = pygame.image.load("woda.png")
 image5_surface = pygame.image.load("castle.png")
+imageDEC_surface = pygame.image.load("ekran.png")
+button1_surface = pygame.image.load("button1.png")
+button2_surface = pygame.image.load("button2.png")
+button3_surface = pygame.image.load("button3.png")
+
 player_hex = pygame.Surface((1000, 1000), pygame.SRCALPHA)
 
 wymiar_p = []
@@ -50,7 +55,6 @@ hex_num_x = 20
 hex_num_y = 20
 hex_num = (hex_num_x * hex_num_y)
 licz = 0
-
 
 for j in range(0, hex_num_y):
 
@@ -144,6 +148,7 @@ def keyboard():
 
 def score():
 
+    up_bar.fill((0, 0, 0))
     # money
     money = pygame.font.Font(None, 25)
 
@@ -165,22 +170,56 @@ def score():
 
 
 def playe_hex():
-    obw = -119
+    obw = 0
 
     player_hex.fill((0, 0, 0, 0))
-    for ob in range(0, 3):
 
-        for o in range(0, 6):
-            wymiar_p.append((obramowanie_wymiary_x[o] + 535 + camx + obw, obramowanie_wymiary_y[o] + 294 + camy))
+    for o in range(0, 6):
+        wymiar_p.append((obramowanie_wymiary_x[o] + 535 + camx + obw, obramowanie_wymiary_y[o] + 294 + camy))
 
-        pygame.draw.polygon(player_hex, (30, 224, 33, 110), wymiar_p)
-        pygame.draw.polygon(player_hex, (255, 255, 255, 50), wymiar_p, 4)
+    pygame.draw.polygon(player_hex, (30, 224, 33, 110), wymiar_p)
+    pygame.draw.polygon(player_hex, (255, 255, 255, 50), wymiar_p, 4)
 
-        for o in range(0, 6):
-            wymiar_p.pop()
+    for o in range(0, 6):
+        wymiar_p.pop()
 
-        obw += 119
     screen.blit(player_hex, (0, 0))
+
+
+def decision():
+    global m_score
+    global a_score
+    global wyb
+
+    if wyb:
+
+        dec_rect = imageDEC_surface.get_rect(center=(640, 360))
+        button1_rect = button1_surface.get_rect(midleft=(670, 360))
+        button2_rect = button2_surface.get_rect(midright=(610, 360))
+        screen.blit(imageDEC_surface, dec_rect)
+        screen.blit(button1_surface, button1_rect)
+        screen.blit(button2_surface, button2_rect)
+        colision = pygame.mouse.get_pos()
+        mouse_pressed = pygame.mouse.get_pressed()
+        if button1_rect.collidepoint(colision) and mouse_pressed[0]:
+
+            m_score += 10
+            wyb = False
+        if button2_rect.collidepoint(colision) and mouse_pressed[0]:
+
+            a_score += 10
+            wyb = False
+
+
+def turn():
+    global wyb
+    turn_rect = button3_surface.get_rect(center=(100, 600))
+    screen.blit(button3_surface, turn_rect)
+    colision = pygame.mouse.get_pos()
+    mouse_pressed = pygame.mouse.get_pressed()
+    if turn_rect.collidepoint(colision) and mouse_pressed[0]:
+
+        wyb = True
 
 
 while True:
@@ -193,8 +232,8 @@ while True:
     playe_hex()
     screen.blit(up_bar, (0, 0))
     score()
-
+    decision()
     keyboard()
     mouse()
-
+    turn()
     pygame.display.update()
