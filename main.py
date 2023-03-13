@@ -31,6 +31,9 @@ p_score = 1
 wyb = True
 pause = False
 
+
+
+
 # interfejs
 up_bar = pygame.Surface((1280, 30))
 up_bar.fill("black")
@@ -45,6 +48,21 @@ imageDEC_surface = pygame.image.load(tekstury_path+"ekran.png")
 button1_surface = pygame.image.load(tekstury_path+"button1.png")
 button2_surface = pygame.image.load(tekstury_path+"button2.png")
 button3_surface = pygame.image.load(tekstury_path+"button3.png")
+# tło meny pauzy
+pause_surface = pygame.Surface((res[0]-100,res[1]-100), pygame.SRCALPHA)   # per-pixel alpha
+#przycisku menu
+
+#b = pygame.Rect(left, top, width, height)
+button_play = pygame.Rect(res[0]/2-200/2,200,200,97)
+button_option = pygame.Rect(res[0]/2-200/2, 310, 200, 78)
+button_exit = pygame.Rect(res[0]/2-200/2, 420, 200, 78)
+#button_option = pygame.Rect(centerW-ButtonW/2, ButtonPosition*(2+1), ButtonW, 50)
+button_exit = pygame.Rect(res[0]/2-200/2, 530, 200, 100)
+
+button_play_surface = pygame.image.load('GUI//play_button.png')
+button_option_surface = pygame.image.load('GUI//option_button.png')
+button_exit_surface = pygame.image.load('GUI//exit_button.png')
+
 
 player_hex = pygame.Surface((1000, 1000), pygame.SRCALPHA)
 
@@ -235,29 +253,23 @@ def draw_text(text, font, color, surface, x, y):
     surface.blit(textobj, textrect)
 
 def menu_pause():
-    centerH =res[0]//2
-    centerW = res[1]//2
-    ButtonW = res[1]*0.8
-    ButtonPosition= 100
+    
     global pause
     global click
     pause_surface = pygame.Surface((res[0]-100,res[1]-100), pygame.SRCALPHA)   # per-pixel alpha
-    pause_surface.fill((0,0,0,30))                         # notice the alpha value in the color
+    pause_surface.fill((0,0,0,220))                         # notice the alpha value in the color
+    
     screen.blit(pause_surface, (50,50))
     
-    
-    button_play = pygame.Rect(centerW-ButtonW/2, ButtonPosition*(1+1), ButtonW, 50)
-    button_option = pygame.Rect(centerW-ButtonW/2, ButtonPosition*(2+1), ButtonW, 50)
-    button_exit = pygame.Rect(centerW-ButtonW/2, ButtonPosition*(3+1), ButtonW, 50)
-    
-    pygame.draw.rect(screen, pygame.Color(255, 0, 0,1), button_play)
-    draw_text('Play', font, (255, 255, 255), screen, ButtonW/2, ButtonPosition*2+15)
-    pygame.draw.rect(screen, (255, 0, 0), button_option)
-    draw_text('Options', font, (255, 255, 255), screen, ButtonW/2, ButtonPosition*3+15)
-    pygame.draw.rect(screen, (0, 255, 0,10), button_exit)
-    draw_text('Exit', font, (255, 255, 255), screen, ButtonW/2, ButtonPosition*4+15)
+
+    screen.blit(button_play_surface, button_play)
+    screen.blit(button_option_surface, button_option)
+    screen.blit(button_exit_surface, button_exit)
+
     while pause:
         for event in pygame.event.get():
+            if event.type == pygame.QUIT:
+                sys.exit(0)
             if event.type == pygame.KEYDOWN:
                 if event.key == pygame.K_ESCAPE and pause==False:
                     pause=True
@@ -270,10 +282,12 @@ def menu_pause():
         if button_play.collidepoint((mx, my)):
             if click:
                 click=False
+                print('Play')
                 #game()
         if button_option.collidepoint((mx, my)):
             if click:
                 click=False
+                print('Options')
                 #options()
         if button_exit.collidepoint((mx, my)):
             if click:
@@ -297,8 +311,6 @@ while True:
             if event.key == pygame.K_ESCAPE and pause==False:
                 pause=True
                 menu_pause()
-            else:
-                pause=False
     draw()
     playe_hex()
     screen.blit(up_bar, (0, 0))
