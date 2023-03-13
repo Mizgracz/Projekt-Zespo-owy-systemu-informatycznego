@@ -2,6 +2,7 @@ import sys
 import random
 import pygame
 
+
 pygame.init()
 res = (1280, 720)
 screen = pygame.display.set_mode(res)
@@ -9,9 +10,12 @@ screen.fill((255, 255, 255))
 clock = pygame.time.Clock()
 
 # ticking
-
+mainClock = pygame.time.Clock()
 
 # zmienne
+
+tekstury_path = 'tekstury//'
+click=False
 
 wymiary = (100, 200)
 szerokosc_hex = 0
@@ -25,21 +29,22 @@ m_score = 0
 a_score = 0
 p_score = 1
 wyb = True
+pause = False
 
 # interfejs
 up_bar = pygame.Surface((1280, 30))
 up_bar.fill("black")
 
 # wczytanie tekstury
-image1_surface = pygame.image.load("hex_trawa.png")
-image2_surface = pygame.image.load("wioska.png")
-image3_surface = pygame.image.load("las.png")
-image4_surface = pygame.image.load("woda.png")
-image5_surface = pygame.image.load("castle.png")
-imageDEC_surface = pygame.image.load("ekran.png")
-button1_surface = pygame.image.load("button1.png")
-button2_surface = pygame.image.load("button2.png")
-button3_surface = pygame.image.load("button3.png")
+image1_surface = pygame.image.load(tekstury_path+"hex_trawa.png")
+image2_surface = pygame.image.load(tekstury_path+"wioska.png")
+image3_surface = pygame.image.load(tekstury_path+"las.png")
+image4_surface = pygame.image.load(tekstury_path+"woda.png")
+image5_surface = pygame.image.load(tekstury_path+"castle.png")
+imageDEC_surface = pygame.image.load(tekstury_path+"ekran.png")
+button1_surface = pygame.image.load(tekstury_path+"button1.png")
+button2_surface = pygame.image.load(tekstury_path+"button2.png")
+button3_surface = pygame.image.load(tekstury_path+"button3.png")
 
 player_hex = pygame.Surface((1000, 1000), pygame.SRCALPHA)
 
@@ -221,13 +226,79 @@ def turn():
 
         wyb = True
 
+font = pygame.font.SysFont(None, 30)
+
+def draw_text(text, font, color, surface, x, y):
+    textobj = font.render(text, 1, color)
+    textrect = textobj.get_rect()
+    textrect.topleft = (x, y)
+    surface.blit(textobj, textrect)
+
+def menu_pause():
+    centerH =res[0]//2
+    centerW = res[1]//2
+    ButtonW = res[1]*0.8
+    ButtonPosition= 100
+    global pause
+    global click
+    pause_surface = pygame.Surface((res[0]-100,res[1]-100), pygame.SRCALPHA)   # per-pixel alpha
+    pause_surface.fill((0,0,0,30))                         # notice the alpha value in the color
+    screen.blit(pause_surface, (50,50))
+    
+    
+    button_play = pygame.Rect(centerW-ButtonW/2, ButtonPosition*(1+1), ButtonW, 50)
+    button_option = pygame.Rect(centerW-ButtonW/2, ButtonPosition*(2+1), ButtonW, 50)
+    button_exit = pygame.Rect(centerW-ButtonW/2, ButtonPosition*(3+1), ButtonW, 50)
+    
+    pygame.draw.rect(screen, pygame.Color(255, 0, 0,1), button_play)
+    draw_text('Play', font, (255, 255, 255), screen, ButtonW/2, ButtonPosition*2+15)
+    pygame.draw.rect(screen, (255, 0, 0), button_option)
+    draw_text('Options', font, (255, 255, 255), screen, ButtonW/2, ButtonPosition*3+15)
+    pygame.draw.rect(screen, (0, 255, 0,10), button_exit)
+    draw_text('Exit', font, (255, 255, 255), screen, ButtonW/2, ButtonPosition*4+15)
+    while pause:
+        for event in pygame.event.get():
+            if event.type == pygame.KEYDOWN:
+                if event.key == pygame.K_ESCAPE and pause==False:
+                    pause=True
+                else:
+                    pause=False
+            if event.type == pygame.MOUSEBUTTONDOWN:
+                if event.button == 1:
+                    click = True
+        mx, my = pygame.mouse.get_pos()
+        if button_play.collidepoint((mx, my)):
+            if click:
+                click=False
+                #game()
+        if button_option.collidepoint((mx, my)):
+            if click:
+                click=False
+                #options()
+        if button_exit.collidepoint((mx, my)):
+            if click:
+                pygame.quit()
+                sys.exit()
+
+        pygame.display.update()
+        mainClock.tick(60)
+def game():
+    click=False
+
+def options():
+    click=False
 
 while True:
 
     for event in pygame.event.get():
         if event.type == pygame.QUIT:
             sys.exit(0)
-
+        if event.type == pygame.KEYDOWN:
+            if event.key == pygame.K_ESCAPE and pause==False:
+                pause=True
+                menu_pause()
+            else:
+                pause=False
     draw()
     playe_hex()
     screen.blit(up_bar, (0, 0))
@@ -236,4 +307,7 @@ while True:
     keyboard()
     mouse()
     turn()
+    
+
     pygame.display.update()
+    mainClock.tick(60)
